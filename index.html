@@ -213,16 +213,8 @@
     position:relative;
   }
   .chart-card canvas{ width:100% !important; height:100% !important; }
-  .yoy-charts-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
-    margin-bottom:8px;
-  }
-  .chart-card.small{ height:230px; }
   @media (max-width: 900px){
     .mom-charts-grid{ grid-template-columns:1fr; }
-    .yoy-charts-grid{ grid-template-columns:1fr; }
   }
 
   .brand-pill{
@@ -341,23 +333,19 @@
         <div class="section-title">ROAS by Brand &amp; Market <span class="hint">Google Ads &amp; Meta — Last 7 Days and Month to Date</span></div>
         <div class="table-wrap"><table id="roasTable"></table></div>
 
-        <div class="section-title">Day over Day — Google Ads &amp; Meta <span class="hint">Yesterday vs the day before</span></div>
-        <div class="table-wrap"><table id="dodTable-summary"></table></div>
+        <div class="section-title">Google Ads Summary<span class="hint" id="periodLabelGoogle-summary"></span></div>
+        <div class="kpi-grid" id="kpiGoogle-summary"></div>
 
-        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
-        <div class="table-wrap"><table id="momTable-summary"></table></div>
+        <div class="section-title">Meta Summary<span class="hint" id="periodLabelMeta-summary"></span></div>
+        <div class="kpi-grid" id="kpiMeta-summary"></div>
 
-        <div class="section-title">12-Month Trend — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS by month</span></div>
+        <div class="section-title">Shopify Summary<span class="hint" id="periodLabelShopify-summary"></span></div>
+        <div class="kpi-grid" id="kpiShopify-summary"></div>
+
+        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS, 12-month trend</span></div>
         <div class="mom-charts-grid">
-          <div class="chart-card"><canvas id="trendChartSpendRevenue-summary"></canvas></div>
-          <div class="chart-card"><canvas id="trendChartRoas-summary"></canvas></div>
-        </div>
-
-        <div class="section-title">vs Last Year — Google Ads &amp; Meta <span class="hint">% change in Spend, Revenue &amp; ROAS</span></div>
-        <div class="yoy-charts-grid">
-          <div class="chart-card small"><canvas id="yoyChart7d-summary"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChart30d-summary"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChartMtd-summary"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartGoogle-summary"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartMeta-summary"></canvas></div>
         </div>
 
         <div class="section-title">Brand &amp; Market Breakdown <span class="hint" id="periodLabel-summary"></span></div>
@@ -369,20 +357,16 @@
         <div class="page-head"><div class="accent-bar"></div><h2>DB Designer Brands</h2></div>
         <div class="section-title">Overall Performance<span class="hint">vs prior period &amp; same period last year</span></div>
         <div class="kpi-grid" id="kpi-DB"></div>
-        <div class="section-title">Day over Day — Google Ads &amp; Meta <span class="hint">Yesterday vs the day before</span></div>
-        <div class="table-wrap"><table id="dodTable-DB"></table></div>
-        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
-        <div class="table-wrap"><table id="momTable-DB"></table></div>
-        <div class="section-title">12-Month Trend — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS by month</span></div>
+        <div class="section-title">Google Ads Summary<span class="hint" id="periodLabelGoogle-DB"></span></div>
+        <div class="kpi-grid" id="kpiGoogle-DB"></div>
+        <div class="section-title">Meta Summary<span class="hint" id="periodLabelMeta-DB"></span></div>
+        <div class="kpi-grid" id="kpiMeta-DB"></div>
+        <div class="section-title">Shopify Summary<span class="hint" id="periodLabelShopify-DB"></span></div>
+        <div class="kpi-grid" id="kpiShopify-DB"></div>
+        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS, 12-month trend</span></div>
         <div class="mom-charts-grid">
-          <div class="chart-card"><canvas id="trendChartSpendRevenue-DB"></canvas></div>
-          <div class="chart-card"><canvas id="trendChartRoas-DB"></canvas></div>
-        </div>
-        <div class="section-title">vs Last Year — Google Ads &amp; Meta <span class="hint">% change in Spend, Revenue &amp; ROAS</span></div>
-        <div class="yoy-charts-grid">
-          <div class="chart-card small"><canvas id="yoyChart7d-DB"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChart30d-DB"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChartMtd-DB"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartGoogle-DB"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartMeta-DB"></canvas></div>
         </div>
         <div class="section-title">Markets / Regions <span class="hint" id="periodLabel-DB"></span></div>
         <div class="table-wrap"><table id="regionTable-DB"></table></div>
@@ -392,20 +376,16 @@
         <div class="page-head"><div class="accent-bar"></div><h2>INIKA Organic</h2></div>
         <div class="section-title">Overall Performance<span class="hint">vs prior period &amp; same period last year</span></div>
         <div class="kpi-grid" id="kpi-INIKA"></div>
-        <div class="section-title">Day over Day — Google Ads &amp; Meta <span class="hint">Yesterday vs the day before</span></div>
-        <div class="table-wrap"><table id="dodTable-INIKA"></table></div>
-        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
-        <div class="table-wrap"><table id="momTable-INIKA"></table></div>
-        <div class="section-title">12-Month Trend — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS by month</span></div>
+        <div class="section-title">Google Ads Summary<span class="hint" id="periodLabelGoogle-INIKA"></span></div>
+        <div class="kpi-grid" id="kpiGoogle-INIKA"></div>
+        <div class="section-title">Meta Summary<span class="hint" id="periodLabelMeta-INIKA"></span></div>
+        <div class="kpi-grid" id="kpiMeta-INIKA"></div>
+        <div class="section-title">Shopify Summary<span class="hint" id="periodLabelShopify-INIKA"></span></div>
+        <div class="kpi-grid" id="kpiShopify-INIKA"></div>
+        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS, 12-month trend</span></div>
         <div class="mom-charts-grid">
-          <div class="chart-card"><canvas id="trendChartSpendRevenue-INIKA"></canvas></div>
-          <div class="chart-card"><canvas id="trendChartRoas-INIKA"></canvas></div>
-        </div>
-        <div class="section-title">vs Last Year — Google Ads &amp; Meta <span class="hint">% change in Spend, Revenue &amp; ROAS</span></div>
-        <div class="yoy-charts-grid">
-          <div class="chart-card small"><canvas id="yoyChart7d-INIKA"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChart30d-INIKA"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChartMtd-INIKA"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartGoogle-INIKA"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartMeta-INIKA"></canvas></div>
         </div>
         <div class="section-title">Markets / Regions <span class="hint" id="periodLabel-INIKA"></span></div>
         <div class="table-wrap"><table id="regionTable-INIKA"></table></div>
@@ -415,20 +395,16 @@
         <div class="page-head"><div class="accent-bar"></div><h2>RAWW Cosmetics</h2></div>
         <div class="section-title">Overall Performance<span class="hint">vs prior period &amp; same period last year</span></div>
         <div class="kpi-grid" id="kpi-RAWW"></div>
-        <div class="section-title">Day over Day — Google Ads &amp; Meta <span class="hint">Yesterday vs the day before</span></div>
-        <div class="table-wrap"><table id="dodTable-RAWW"></table></div>
-        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
-        <div class="table-wrap"><table id="momTable-RAWW"></table></div>
-        <div class="section-title">12-Month Trend — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS by month</span></div>
+        <div class="section-title">Google Ads Summary<span class="hint" id="periodLabelGoogle-RAWW"></span></div>
+        <div class="kpi-grid" id="kpiGoogle-RAWW"></div>
+        <div class="section-title">Meta Summary<span class="hint" id="periodLabelMeta-RAWW"></span></div>
+        <div class="kpi-grid" id="kpiMeta-RAWW"></div>
+        <div class="section-title">Shopify Summary<span class="hint" id="periodLabelShopify-RAWW"></span></div>
+        <div class="kpi-grid" id="kpiShopify-RAWW"></div>
+        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS, 12-month trend</span></div>
         <div class="mom-charts-grid">
-          <div class="chart-card"><canvas id="trendChartSpendRevenue-RAWW"></canvas></div>
-          <div class="chart-card"><canvas id="trendChartRoas-RAWW"></canvas></div>
-        </div>
-        <div class="section-title">vs Last Year — Google Ads &amp; Meta <span class="hint">% change in Spend, Revenue &amp; ROAS</span></div>
-        <div class="yoy-charts-grid">
-          <div class="chart-card small"><canvas id="yoyChart7d-RAWW"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChart30d-RAWW"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChartMtd-RAWW"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartGoogle-RAWW"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartMeta-RAWW"></canvas></div>
         </div>
         <div class="section-title">Markets / Regions <span class="hint" id="periodLabel-RAWW"></span></div>
         <div class="table-wrap"><table id="regionTable-RAWW"></table></div>
@@ -506,20 +482,16 @@ function buildMarketPages(){
         <div class="page-head"><div class="accent-bar"></div><h2>${BRAND_META[brand].label} — ${market}</h2></div>
         <div class="section-title">Overall Performance<span class="hint">vs prior period &amp; same period last year</span></div>
         <div class="kpi-grid" id="kpi-${id}"></div>
-        <div class="section-title">Day over Day — Google Ads &amp; Meta <span class="hint">Yesterday vs the day before</span></div>
-        <div class="table-wrap"><table id="dodTable-${id}"></table></div>
-        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
-        <div class="table-wrap"><table id="momTable-${id}"></table></div>
-        <div class="section-title">12-Month Trend — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS by month</span></div>
+        <div class="section-title">Google Ads Summary<span class="hint" id="periodLabelGoogle-${id}"></span></div>
+        <div class="kpi-grid" id="kpiGoogle-${id}"></div>
+        <div class="section-title">Meta Summary<span class="hint" id="periodLabelMeta-${id}"></span></div>
+        <div class="kpi-grid" id="kpiMeta-${id}"></div>
+        <div class="section-title">Shopify Summary<span class="hint" id="periodLabelShopify-${id}"></span></div>
+        <div class="kpi-grid" id="kpiShopify-${id}"></div>
+        <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Spend, Revenue &amp; ROAS, 12-month trend</span></div>
         <div class="mom-charts-grid">
-          <div class="chart-card"><canvas id="trendChartSpendRevenue-${id}"></canvas></div>
-          <div class="chart-card"><canvas id="trendChartRoas-${id}"></canvas></div>
-        </div>
-        <div class="section-title">vs Last Year — Google Ads &amp; Meta <span class="hint">% change in Spend, Revenue &amp; ROAS</span></div>
-        <div class="yoy-charts-grid">
-          <div class="chart-card small"><canvas id="yoyChart7d-${id}"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChart30d-${id}"></canvas></div>
-          <div class="chart-card small"><canvas id="yoyChartMtd-${id}"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartGoogle-${id}"></canvas></div>
+          <div class="chart-card"><canvas id="trendChartMeta-${id}"></canvas></div>
         </div>
       `;
       container.appendChild(section);
@@ -719,21 +691,6 @@ function aggregateMonthly(rows){
   return { spend, revenue, roas: spend>0 ? revenue/spend : 0 };
 }
 
-// % change vs same period last year, for Spend/Revenue/ROAS, for one channel.
-// Returns null if either the current or _lastyear period row is missing.
-function computeYoyPct(periodKey, channel, brand, market){
-  const curRows = sumDashboard(periodKey, channel, brand, market);
-  const lyRows = sumDashboard(periodKey + '_lastyear', channel, brand, market);
-  if (!curRows.length || !lyRows.length) return null;
-  const cur = aggregate(curRows);
-  const ly = aggregate(lyRows);
-  return {
-    spend: pctDelta(cur.spend, ly.spend),
-    revenue: pctDelta(cur.revenue, ly.revenue),
-    roas: pctDelta(cur.roas, ly.roas)
-  };
-}
-
 function sumDashboard(period, channel, brand, market){
   return dashboardData.filter(r =>
     r.Period === period &&
@@ -789,33 +746,24 @@ function deltaBadge(curr, comparison, label, invertColor){
 }
 
 /* ── KPI rendering ───────────────────────────────────────────── */
-function renderKPIs(containerId, brand, market){
+// Aggregates a channel's current period plus the matching _prior and
+// _lastyear rows, so cards can show "vs prior period" / "vs last year".
+function periodComparison(periodKey, channel, brand, market){
+  const curRows = sumDashboard(periodKey, channel, brand, market);
+  const popRows = sumDashboard(periodKey + '_prior', channel, brand, market);
+  const yoyRows = sumDashboard(periodKey + '_lastyear', channel, brand, market);
+  return {
+    cur: aggregate(curRows),
+    pop: { available: popRows.length > 0, value: aggregate(popRows) },
+    yoy: { available: yoyRows.length > 0, value: aggregate(yoyRows) }
+  };
+}
+
+// Renders an array of { label, value, raw, pop:{available,value}, yoy:{available,value} }
+// cards into a .kpi-grid container, each with "vs prior period" / "vs last year" deltas.
+function renderKpiCards(containerId, cards){
   const el = document.getElementById(containerId);
   if (!el) return;
-
-  // "Current" values come from the live Dashboard Data snapshot (includes today so far).
-  const cur = aggregate(sumDashboard(currentPeriod, 'Combined', brand, market));
-
-  // PoP / YoY come from the dedicated _prior / _lastyear period rows.
-  const popRows = sumDashboard(currentPeriod + '_prior', 'Combined', brand, market);
-  const yoyRows = sumDashboard(currentPeriod + '_lastyear', 'Combined', brand, market);
-  const pop = aggregate(popRows);
-  const yoy = aggregate(yoyRows);
-  const popAvailable = popRows.length > 0;
-  const yoyAvailable = yoyRows.length > 0;
-
-  const cards = [
-    { label: 'Overall Spend', value: fmtCurrency(cur.spend),
-      pop: { available: popAvailable, value: pop.spend }, yoy: { available: yoyAvailable, value: yoy.spend }, raw: cur.spend },
-    { label: 'Overall Revenue (Net Sales)', value: fmtCurrency(cur.revenue),
-      pop: { available: popAvailable, value: pop.revenue }, yoy: { available: yoyAvailable, value: yoy.revenue }, raw: cur.revenue },
-    { label: 'Avg. ROAS (Combined)', value: fmtRoas(cur.roas),
-      pop: { available: popAvailable, value: pop.spend>0 ? pop.revenue/pop.spend : 0 },
-      yoy: { available: yoyAvailable, value: yoy.spend>0 ? yoy.revenue/yoy.spend : 0 }, raw: cur.roas },
-    { label: 'Orders (Shopify)', value: fmtNumber(cur.orders),
-      pop: { available: popAvailable, value: pop.orders }, yoy: { available: yoyAvailable, value: yoy.orders }, raw: cur.orders }
-  ];
-
   el.innerHTML = cards.map(c => `
     <div class="kpi-card">
       <div class="label">${c.label}</div>
@@ -826,6 +774,68 @@ function renderKPIs(containerId, brand, market){
       </div>
     </div>
   `).join('');
+}
+
+function renderKPIs(containerId, brand, market){
+  const cmp = periodComparison(currentPeriod, 'Combined', brand, market);
+  const cur = cmp.cur, pop = cmp.pop.value, yoy = cmp.yoy.value;
+
+  const cards = [
+    { label: 'Overall Spend', value: fmtCurrency(cur.spend), raw: cur.spend,
+      pop: { available: cmp.pop.available, value: pop.spend }, yoy: { available: cmp.yoy.available, value: yoy.spend } },
+    { label: 'Overall Revenue (Net Sales)', value: fmtCurrency(cur.revenue), raw: cur.revenue,
+      pop: { available: cmp.pop.available, value: pop.revenue }, yoy: { available: cmp.yoy.available, value: yoy.revenue } },
+    { label: 'Avg. ROAS (Combined)', value: fmtRoas(cur.roas), raw: cur.roas,
+      pop: { available: cmp.pop.available, value: pop.spend>0 ? pop.revenue/pop.spend : 0 },
+      yoy: { available: cmp.yoy.available, value: yoy.spend>0 ? yoy.revenue/yoy.spend : 0 } },
+    { label: 'Orders (Shopify)', value: fmtNumber(cur.orders), raw: cur.orders,
+      pop: { available: cmp.pop.available, value: pop.orders }, yoy: { available: cmp.yoy.available, value: yoy.orders } }
+  ];
+
+  renderKpiCards(containerId, cards);
+}
+
+/* ── Google Ads / Meta / Shopify summary cards ──────────────────── */
+// Spend, Revenue, ROAS & Conversions for a single channel (Google Ads or Meta).
+function renderChannelSummary(suffix, channel, brand, market){
+  const channelKey = channel === 'Google Ads' ? 'Google' : 'Meta';
+  const labelEl = document.getElementById('periodLabel' + channelKey + '-' + suffix);
+  if (labelEl) labelEl.textContent = PERIOD_LABELS[currentPeriod];
+
+  const cmp = periodComparison(currentPeriod, channel, brand, market);
+  const cur = cmp.cur, pop = cmp.pop.value, yoy = cmp.yoy.value;
+
+  const cards = [
+    { label: 'Spend', value: fmtCurrency(cur.spend), raw: cur.spend,
+      pop: { available: cmp.pop.available, value: pop.spend }, yoy: { available: cmp.yoy.available, value: yoy.spend } },
+    { label: 'Revenue', value: fmtCurrency(cur.revenue), raw: cur.revenue,
+      pop: { available: cmp.pop.available, value: pop.revenue }, yoy: { available: cmp.yoy.available, value: yoy.revenue } },
+    { label: 'ROAS', value: fmtRoas(cur.roas), raw: cur.roas,
+      pop: { available: cmp.pop.available, value: pop.spend>0 ? pop.revenue/pop.spend : 0 },
+      yoy: { available: cmp.yoy.available, value: yoy.spend>0 ? yoy.revenue/yoy.spend : 0 } },
+    { label: 'Conversions', value: fmtNumber(cur.conversions), raw: cur.conversions,
+      pop: { available: cmp.pop.available, value: pop.conversions }, yoy: { available: cmp.yoy.available, value: yoy.conversions } }
+  ];
+
+  renderKpiCards('kpi' + channelKey + '-' + suffix, cards);
+}
+
+// Net Sales & Orders from Shopify.
+function renderShopifySummary(suffix, brand, market){
+  const labelEl = document.getElementById('periodLabelShopify-' + suffix);
+  if (labelEl) labelEl.textContent = PERIOD_LABELS[currentPeriod];
+
+  const cmp = periodComparison(currentPeriod, 'Shopify', brand, market);
+  const cur = cmp.cur, pop = cmp.pop.value, yoy = cmp.yoy.value;
+
+  const cards = [
+    { label: 'Net Sales', value: fmtCurrency(cur.revenue), raw: cur.revenue,
+      pop: { available: cmp.pop.available, value: pop.revenue }, yoy: { available: cmp.yoy.available, value: yoy.revenue } },
+    { label: 'Orders', value: fmtNumber(cur.orders), raw: cur.orders,
+      pop: { available: cmp.pop.available, value: pop.orders }, yoy: { available: cmp.yoy.available, value: yoy.orders } }
+  ];
+
+  renderKpiCards('kpiShopify-' + suffix, cards);
 }
 
 /* ── Total Summary: ROAS by Brand & Market table ────────────────── */
@@ -855,70 +865,6 @@ function renderRoasTable(){
   });
   body += '</tbody>';
   table.innerHTML = head + body;
-}
-
-/* ── DoD / MoM tables (Google Ads & Meta) ───────────────────────── */
-function renderTrendTables(suffix, brand, market){
-
-  // Day over Day (yesterday vs the day before)
-  let dodHead = `<thead><tr>
-    <th>Channel</th>
-    <th>Spend (Yesterday)</th><th>Spend Δ DoD</th>
-    <th>Revenue (Yesterday)</th><th>Revenue Δ DoD</th>
-    <th>ROAS (Yesterday)</th><th>ROAS Δ DoD</th>
-    <th>Conversions</th><th>Conv. Δ DoD</th>
-  </tr></thead><tbody>`;
-  ['Google Ads','Meta'].forEach(channel => {
-    const cRows = sumDashboard('yesterday', channel, brand, market);
-    const pRows = sumDashboard('daybefore', channel, brand, market);
-    const c = aggregate(cRows);
-    const p = aggregate(pRows);
-    const pAvailable = pRows.length > 0;
-    dodHead += `<tr>
-      <td class="brand-cell">${channel}</td>
-      <td>${fmtCurrency(c.spend)}</td>
-      <td>${deltaBadge(c.spend, {available:pAvailable, value:p.spend}, '')}</td>
-      <td>${fmtCurrency(c.revenue)}</td>
-      <td>${deltaBadge(c.revenue, {available:pAvailable, value:p.revenue}, '')}</td>
-      <td>${fmtRoas(c.roas)}</td>
-      <td>${deltaBadge(c.roas, {available:pAvailable, value:p.roas}, '')}</td>
-      <td>${fmtNumber(c.conversions)}</td>
-      <td>${deltaBadge(c.conversions, {available:pAvailable, value:p.conversions}, '')}</td>
-    </tr>`;
-  });
-  dodHead += '</tbody>';
-  const dodEl = document.getElementById('dodTable-' + suffix);
-  if (dodEl) dodEl.innerHTML = dodHead;
-
-  // Month over Month (MTD vs same days last month)
-  let momHead = `<thead><tr>
-    <th>Channel</th>
-    <th>Spend (MTD)</th><th>Spend Δ MoM</th>
-    <th>Revenue (MTD)</th><th>Revenue Δ MoM</th>
-    <th>ROAS (MTD)</th><th>ROAS Δ MoM</th>
-    <th>Conversions</th><th>Conv. Δ MoM</th>
-  </tr></thead><tbody>`;
-  ['Google Ads','Meta'].forEach(channel => {
-    const cRows = sumDashboard('mtd', channel, brand, market);
-    const pRows = sumDashboard('mtd_prior', channel, brand, market);
-    const c = aggregate(cRows);
-    const p = aggregate(pRows);
-    const pAvailable = pRows.length > 0;
-    momHead += `<tr>
-      <td class="brand-cell">${channel}</td>
-      <td>${fmtCurrency(c.spend)}</td>
-      <td>${deltaBadge(c.spend, {available:pAvailable, value:p.spend}, '')}</td>
-      <td>${fmtCurrency(c.revenue)}</td>
-      <td>${deltaBadge(c.revenue, {available:pAvailable, value:p.revenue}, '')}</td>
-      <td>${fmtRoas(c.roas)}</td>
-      <td>${deltaBadge(c.roas, {available:pAvailable, value:p.roas}, '')}</td>
-      <td>${fmtNumber(c.conversions)}</td>
-      <td>${deltaBadge(c.conversions, {available:pAvailable, value:p.conversions}, '')}</td>
-    </tr>`;
-  });
-  momHead += '</tbody>';
-  const momEl = document.getElementById('momTable-' + suffix);
-  if (momEl) momEl.innerHTML = momHead;
 }
 
 /* ── Total Summary: Brand & Market breakdown ────────────────────── */
@@ -1010,7 +956,7 @@ function renderRegionTable(brand){
   table.innerHTML = head + body + '</tbody>';
 }
 
-/* ── Trend & YoY charts (Google Ads & Meta) ─────────────────────── */
+/* ── Month over Month trend charts (Google Ads & Meta) ──────────── */
 const momCharts = {};
 
 function destroyChart(key){
@@ -1020,105 +966,35 @@ function destroyChart(key){
   }
 }
 
-// 12-month line charts: Spend & Revenue, and ROAS, for Google Ads & Meta.
-function renderTrendCharts(suffix, brand, market){
-  if (typeof Chart === 'undefined') return;
-  const srCanvas = document.getElementById('trendChartSpendRevenue-' + suffix);
-  const roasCanvas = document.getElementById('trendChartRoas-' + suffix);
-  if (!srCanvas || !roasCanvas) return;
-
-  const months = last12MonthKeys();
-  const labels = months.map(m => m.label);
-
-  const gSpend = [], gRev = [], mSpend = [], mRev = [], gRoas = [], mRoas = [];
-  months.forEach(m => {
-    const g = aggregateMonthly(sumMonthly(m.key, 'Google Ads', brand, market));
-    const me = aggregateMonthly(sumMonthly(m.key, 'Meta', brand, market));
-    gSpend.push(g.spend); gRev.push(g.revenue); gRoas.push(g.roas);
-    mSpend.push(me.spend); mRev.push(me.revenue); mRoas.push(me.roas);
-  });
-
-  const goldColor = '#c9a227';
-  const roseColor = '#c2185b';
-
-  destroyChart('trendSR-' + suffix);
-  momCharts['trendSR-' + suffix] = new Chart(srCanvas, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Google Ads Spend', data: gSpend, borderColor: goldColor, backgroundColor: goldColor, tension: 0.3 },
-        { label: 'Google Ads Revenue', data: gRev, borderColor: goldColor, backgroundColor: goldColor, borderDash: [5,3], tension: 0.3 },
-        { label: 'Meta Spend', data: mSpend, borderColor: roseColor, backgroundColor: roseColor, tension: 0.3 },
-        { label: 'Meta Revenue', data: mRev, borderColor: roseColor, backgroundColor: roseColor, borderDash: [5,3], tension: 0.3 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        title: { display: true, text: 'Spend & Revenue — 12-Month Trend' },
-        legend: { position: 'bottom' }
-      },
-      scales: {
-        y: { beginAtZero: true, ticks: { callback: (v) => '$' + Number(v).toLocaleString('en-AU') } }
-      }
-    }
-  });
-
-  destroyChart('trendRoas-' + suffix);
-  momCharts['trendRoas-' + suffix] = new Chart(roasCanvas, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Google Ads ROAS', data: gRoas, borderColor: goldColor, backgroundColor: goldColor, tension: 0.3 },
-        { label: 'Meta ROAS', data: mRoas, borderColor: roseColor, backgroundColor: roseColor, tension: 0.3 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        title: { display: true, text: 'ROAS — 12-Month Trend' },
-        legend: { position: 'bottom' }
-      },
-      scales: {
-        y: { beginAtZero: true, ticks: { callback: (v) => Number(v).toFixed(1) + 'x' } }
-      }
-    }
-  });
-}
-
-// One small % change chart (Spend/Revenue/ROAS, Google Ads vs Meta) for a
-// given period vs the same period last year.
-function renderYoyChart(canvasId, chartKey, title, periodKey, brand, market){
+// One dual-axis chart for a single platform: Spend & Revenue as bars on the
+// left axis, ROAS as a line on the right axis, over the last 12 months.
+function renderPlatformTrendChart(canvasId, chartKey, title, channel, brand, market){
   if (typeof Chart === 'undefined') return;
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
-  const gYoy = computeYoyPct(periodKey, 'Google Ads', brand, market);
-  const mYoy = computeYoyPct(periodKey, 'Meta', brand, market);
+  const months = last12MonthKeys();
+  const labels = months.map(m => m.label);
+
+  const spendArr = [], revArr = [], roasArr = [];
+  months.forEach(m => {
+    const agg = aggregateMonthly(sumMonthly(m.key, channel, brand, market));
+    spendArr.push(agg.spend); revArr.push(agg.revenue); roasArr.push(agg.roas);
+  });
 
   const goldColor = '#c9a227';
+  const greyColor = '#cfcac0';
   const roseColor = '#c2185b';
 
   destroyChart(chartKey);
   momCharts[chartKey] = new Chart(canvas, {
     type: 'bar',
     data: {
-      labels: ['Spend','Revenue','ROAS'],
+      labels,
       datasets: [
-        {
-          label: gYoy ? 'Google Ads' : 'Google Ads (n/a)',
-          backgroundColor: goldColor,
-          data: gYoy ? [gYoy.spend, gYoy.revenue, gYoy.roas] : [null,null,null]
-        },
-        {
-          label: mYoy ? 'Meta' : 'Meta (n/a)',
-          backgroundColor: roseColor,
-          data: mYoy ? [mYoy.spend, mYoy.revenue, mYoy.roas] : [null,null,null]
-        }
+        { type: 'bar', label: 'Spend', data: spendArr, backgroundColor: goldColor, yAxisID: 'y' },
+        { type: 'bar', label: 'Revenue', data: revArr, backgroundColor: greyColor, yAxisID: 'y' },
+        { type: 'line', label: 'ROAS', data: roasArr, borderColor: roseColor, backgroundColor: roseColor, yAxisID: 'y1', tension: 0.3 }
       ]
     },
     options: {
@@ -1129,17 +1005,17 @@ function renderYoyChart(canvasId, chartKey, title, periodKey, brand, market){
         legend: { position: 'bottom' }
       },
       scales: {
-        y: { ticks: { callback: (v) => v + '%' } }
+        y: { beginAtZero: true, position: 'left', ticks: { callback: (v) => '$' + Number(v).toLocaleString('en-AU') } },
+        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: (v) => Number(v).toFixed(1) + 'x' } }
       }
     }
   });
 }
 
-// The three small "vs Last Year" % change charts: Last 7 Days, Last 30 Days, MTD.
-function renderYoyCharts(suffix, brand, market){
-  renderYoyChart('yoyChart7d-' + suffix, 'yoy7d-' + suffix, 'Last 7 Days vs Last Year', 'last7', brand, market);
-  renderYoyChart('yoyChart30d-' + suffix, 'yoy30d-' + suffix, 'Last 30 Days vs Last Year', 'last30', brand, market);
-  renderYoyChart('yoyChartMtd-' + suffix, 'yoyMtd-' + suffix, 'MTD vs Last Year', 'mtd', brand, market);
+// The two per-platform MoM trend charts: Google Ads and Meta.
+function renderPlatformTrendCharts(suffix, brand, market){
+  renderPlatformTrendChart('trendChartGoogle-' + suffix, 'trendGoogle-' + suffix, 'Google Ads — Spend, Revenue & ROAS (12 Months)', 'Google Ads', brand, market);
+  renderPlatformTrendChart('trendChartMeta-' + suffix, 'trendMeta-' + suffix, 'Meta — Spend, Revenue & ROAS (12 Months)', 'Meta', brand, market);
 }
 
 /* ── Render everything ───────────────────────────────────────── */
@@ -1148,24 +1024,27 @@ function renderAll(){
 
   renderKPIs('kpi-summary', null, null);
   renderRoasTable();
-  renderTrendTables('summary', null, null);
-  renderTrendCharts('summary', null, null);
-  renderYoyCharts('summary', null, null);
+  renderChannelSummary('summary', 'Google Ads', null, null);
+  renderChannelSummary('summary', 'Meta', null, null);
+  renderShopifySummary('summary', null, null);
+  renderPlatformTrendCharts('summary', null, null);
   renderSummaryBreakdown();
 
   BRAND_ORDER.forEach(brand => {
     renderKPIs('kpi-' + brand, brand, null);
-    renderTrendTables(brand, brand, null);
-    renderTrendCharts(brand, brand, null);
-    renderYoyCharts(brand, brand, null);
+    renderChannelSummary(brand, 'Google Ads', brand, null);
+    renderChannelSummary(brand, 'Meta', brand, null);
+    renderShopifySummary(brand, brand, null);
+    renderPlatformTrendCharts(brand, brand, null);
     renderRegionTable(brand);
 
     BRAND_META[brand].markets.forEach(market => {
       const id = marketId(brand, market);
       renderKPIs('kpi-' + id, brand, market);
-      renderTrendTables(id, brand, market);
-      renderTrendCharts(id, brand, market);
-      renderYoyCharts(id, brand, market);
+      renderChannelSummary(id, 'Google Ads', brand, market);
+      renderChannelSummary(id, 'Meta', brand, market);
+      renderShopifySummary(id, brand, market);
+      renderPlatformTrendCharts(id, brand, market);
     });
   });
 }
