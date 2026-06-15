@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>TBN Performance Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root{
     --tbn-charcoal:#1f1f1d;
@@ -195,6 +196,27 @@
   td.neg{ color:var(--negative); }
   td.muted{ color:var(--tbn-grey); }
 
+  /* ── MoM charts ───────────────────────────────────────────── */
+  .mom-charts-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    margin-bottom:8px;
+  }
+  .chart-card{
+    background:var(--tbn-card);
+    border:1px solid var(--tbn-border);
+    border-radius:10px;
+    padding:16px 18px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03);
+    height:280px;
+    position:relative;
+  }
+  .chart-card canvas{ width:100% !important; height:100% !important; }
+  @media (max-width: 900px){
+    .mom-charts-grid{ grid-template-columns:1fr; }
+  }
+
   .brand-pill{
     display:inline-block;
     font-size:.68rem;
@@ -316,6 +338,10 @@
 
         <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
         <div class="table-wrap"><table id="momTable-summary"></table></div>
+        <div class="mom-charts-grid">
+          <div class="chart-card"><canvas id="momChartSpendRevenue-summary"></canvas></div>
+          <div class="chart-card"><canvas id="momChartRoas-summary"></canvas></div>
+        </div>
 
         <div class="section-title">Brand &amp; Market Breakdown <span class="hint" id="periodLabel-summary"></span></div>
         <div class="table-wrap"><table id="breakdownTable-summary"></table></div>
@@ -330,6 +356,10 @@
         <div class="table-wrap"><table id="dodTable-DB"></table></div>
         <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
         <div class="table-wrap"><table id="momTable-DB"></table></div>
+        <div class="mom-charts-grid">
+          <div class="chart-card"><canvas id="momChartSpendRevenue-DB"></canvas></div>
+          <div class="chart-card"><canvas id="momChartRoas-DB"></canvas></div>
+        </div>
         <div class="section-title">Markets / Regions <span class="hint" id="periodLabel-DB"></span></div>
         <div class="table-wrap"><table id="regionTable-DB"></table></div>
       </section>
@@ -342,6 +372,10 @@
         <div class="table-wrap"><table id="dodTable-INIKA"></table></div>
         <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
         <div class="table-wrap"><table id="momTable-INIKA"></table></div>
+        <div class="mom-charts-grid">
+          <div class="chart-card"><canvas id="momChartSpendRevenue-INIKA"></canvas></div>
+          <div class="chart-card"><canvas id="momChartRoas-INIKA"></canvas></div>
+        </div>
         <div class="section-title">Markets / Regions <span class="hint" id="periodLabel-INIKA"></span></div>
         <div class="table-wrap"><table id="regionTable-INIKA"></table></div>
       </section>
@@ -354,6 +388,10 @@
         <div class="table-wrap"><table id="dodTable-RAWW"></table></div>
         <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
         <div class="table-wrap"><table id="momTable-RAWW"></table></div>
+        <div class="mom-charts-grid">
+          <div class="chart-card"><canvas id="momChartSpendRevenue-RAWW"></canvas></div>
+          <div class="chart-card"><canvas id="momChartRoas-RAWW"></canvas></div>
+        </div>
         <div class="section-title">Markets / Regions <span class="hint" id="periodLabel-RAWW"></span></div>
         <div class="table-wrap"><table id="regionTable-RAWW"></table></div>
       </section>
@@ -377,7 +415,6 @@
 const CONFIG = {
   SPREADSHEET_ID: '1DAScvOQ7a4qzy2VtvmBY9AHUEjRnaAuJAQOhui3zH9U', // same ID as SPREADSHEET_ID in the Apps Script
   DASHBOARD_TAB: 'Dashboard Data',
-  HISTORY_TAB: 'History',
   AUTO_REFRESH_MINUTES: 30 // how often the browser re-fetches data in the background
 };
 
@@ -392,7 +429,6 @@ const PERIOD_LABELS = { mtd: 'Current Month (MTD)', last7: 'Last 7 Days', last30
 function marketId(brand, market){ return brand + '__' + market; }
 
 let dashboardData = [];
-let historyData = [];
 let currentPeriod = 'mtd';
 
 /* ── Layout: sidebar + market pages ─────────────────────────── */
@@ -425,6 +461,10 @@ function buildMarketPages(){
         <div class="table-wrap"><table id="dodTable-${id}"></table></div>
         <div class="section-title">Month over Month — Google Ads &amp; Meta <span class="hint">Month to date vs same period last month</span></div>
         <div class="table-wrap"><table id="momTable-${id}"></table></div>
+        <div class="mom-charts-grid">
+          <div class="chart-card"><canvas id="momChartSpendRevenue-${id}"></canvas></div>
+          <div class="chart-card"><canvas id="momChartRoas-${id}"></canvas></div>
+        </div>
       `;
       container.appendChild(section);
     });
@@ -467,9 +507,7 @@ async function loadAll(){
   const notConfigured = !CONFIG.SPREADSHEET_ID || CONFIG.SPREADSHEET_ID === 'PASTE_YOUR_SPREADSHEET_ID_HERE';
 
   if (notConfigured) {
-    const sample = generateSampleData();
-    dashboardData = sample.dash;
-    historyData = sample.hist;
+    dashboardData = generateSampleData();
     banner.innerHTML = `<div class="status-banner">
       <strong>Showing sample data.</strong> This is randomly generated so you can preview the layout.
       To connect your live Google Sheet, open this file and set <code>CONFIG.SPREADSHEET_ID</code> at the top
@@ -481,12 +519,8 @@ async function loadAll(){
   }
 
   try {
-    const [dash, hist] = await Promise.all([
-      loadCsv(csvUrl(CONFIG.DASHBOARD_TAB)),
-      loadCsv(csvUrl(CONFIG.HISTORY_TAB))
-    ]);
+    const dash = await loadCsv(csvUrl(CONFIG.DASHBOARD_TAB));
     dashboardData = dash.filter(r => r.Channel);
-    historyData = hist.filter(r => r.Channel);
     banner.innerHTML = '';
     document.getElementById('lastUpdated').innerHTML =
       `Data loaded <strong>${new Date().toLocaleString('en-AU', { dateStyle:'medium', timeStyle:'short' })}</strong> · underlying figures refresh every 6 hours`;
@@ -494,7 +528,7 @@ async function loadAll(){
   } catch (err) {
     banner.innerHTML = `<div class="status-banner error">
       <strong>Couldn't load data.</strong> Check that <code>CONFIG.SPREADSHEET_ID</code> is correct and that the
-      "Dashboard Data" and "History" tabs are shared as "Anyone with the link can view".<br>
+      "Dashboard Data" tab is shared as "Anyone with the link can view".<br>
       Error: ${err.message || err}
     </div>`;
     document.getElementById('lastUpdated').textContent = 'Load failed';
@@ -504,7 +538,6 @@ async function loadAll(){
 /* ── Sample data generator (used until CONFIG.SPREADSHEET_ID is set) ─ */
 function generateSampleData(){
   const dash = [];
-  const hist = [];
 
   // Per-brand/market daily baseline figures used to scale sample numbers
   const base = {
@@ -514,54 +547,39 @@ function generateSampleData(){
     RAWW:  { AU: { g:140, m:110, rev:620,  ord:6  } }
   };
 
-  const anchor = addDays(new Date(), -1); // "yesterday" — most recent date in History
   const jitter = (mult) => 1 + (Math.random() - 0.5) * mult;
+  const mtdDays = new Date().getDate() - 1 || 1; // days elapsed in MTD (excludes today)
 
-  // 400 days of history per brand/market for Google Ads, Meta, Combined
-  for (let i = 0; i < 400; i++) {
-    const d = addDays(anchor, -i);
-    const dateStr = fmtDateStr(d);
-    const seasonal = 1 + 0.15 * Math.sin(i / 30);
-    Object.keys(base).forEach(brand => {
-      Object.keys(base[brand]).forEach(market => {
-        const b = base[brand][market];
-        const gSpend = Math.round(b.g * jitter(0.3) * seasonal);
-        const mSpend = Math.round(b.m * jitter(0.3) * seasonal);
-        const gRev = Math.round(gSpend * (1.8 + Math.random() * 1.2));
-        const mRev = Math.round(mSpend * (1.6 + Math.random() * 1.4));
-        const totalSpend = gSpend + mSpend;
-        const netSales = Math.round(b.rev * jitter(0.25) * seasonal);
-        const orders = Math.round(b.ord * jitter(0.3) * seasonal);
+  // One entry per Dashboard Data period key. "growth" is a multiplier applied
+  // relative to the "current" period, so comparison cards show a plausible
+  // (and mostly positive) PoP/YoY/DoD delta.
+  const periods = {
+    mtd:             { days: mtdDays, growth: 1    },
+    mtd_prior:       { days: mtdDays, growth: 0.90 },
+    mtd_lastyear:    { days: mtdDays, growth: 0.78 },
+    last7:           { days: 7,       growth: 1    },
+    last7_prior:     { days: 7,       growth: 0.93 },
+    last7_lastyear:  { days: 7,       growth: 0.80 },
+    last30:          { days: 30,      growth: 1    },
+    last30_prior:    { days: 30,      growth: 0.91 },
+    last30_lastyear: { days: 30,      growth: 0.76 },
+    yesterday:       { days: 1,       growth: 1    },
+    daybefore:       { days: 1,       growth: 0.95 }
+  };
 
-        hist.push({ Date: dateStr, Channel: 'Google Ads', Brand: brand, Market: market,
-          Spend: gSpend, Revenue: gRev, ROAS: gSpend > 0 ? gRev / gSpend : '',
-          Conversions: Math.round(gSpend / 35), Clicks: Math.round(gSpend * 2.5), ConvRate: 2.8,
-          Orders: '', Budget: '', Pacing: '' });
-        hist.push({ Date: dateStr, Channel: 'Meta', Brand: brand, Market: market,
-          Spend: mSpend, Revenue: mRev, ROAS: mSpend > 0 ? mRev / mSpend : '',
-          Conversions: Math.round(mSpend / 40), Clicks: Math.round(mSpend * 3), ConvRate: 1.9,
-          Orders: '', Budget: '', Pacing: '' });
-        hist.push({ Date: dateStr, Channel: 'Combined', Brand: brand, Market: market,
-          Spend: totalSpend, Revenue: netSales, ROAS: totalSpend > 0 ? netSales / totalSpend : '',
-          Conversions: '', Clicks: '', ConvRate: '', Orders: orders, Budget: '', Pacing: '' });
-      });
-    });
-  }
-
-  // Current snapshot for mtd / last7 / last30
-  const dayCounts = { last7: 7, mtd: anchor.getDate(), last30: 30 };
   Object.keys(base).forEach(brand => {
     Object.keys(base[brand]).forEach(market => {
       const b = base[brand][market];
-      Object.keys(dayCounts).forEach(period => {
-        const days = dayCounts[period];
-        const gSpend = Math.round(b.g * days * jitter(0.15));
-        const mSpend = Math.round(b.m * days * jitter(0.15));
+      Object.keys(periods).forEach(period => {
+        const { days, growth } = periods[period];
+        const factor = days * growth;
+        const gSpend = Math.round(b.g * factor * jitter(0.15));
+        const mSpend = Math.round(b.m * factor * jitter(0.15));
         const gRev = Math.round(gSpend * (1.8 + Math.random() * 1.0));
         const mRev = Math.round(mSpend * (1.6 + Math.random() * 1.2));
-        const netSales = Math.round(b.rev * days * jitter(0.15));
+        const netSales = Math.round(b.rev * factor * jitter(0.15));
         const totalSpend = gSpend + mSpend;
-        const orders = Math.round(b.ord * days * jitter(0.15));
+        const orders = Math.round(b.ord * factor * jitter(0.15));
 
         dash.push({ Period: period, Channel: 'Google Ads', Brand: brand, Market: market,
           Spend: gSpend, Revenue: gRev, ROAS: gSpend > 0 ? gRev / gSpend : '',
@@ -581,64 +599,7 @@ function generateSampleData(){
     });
   });
 
-  return { dash, hist };
-}
-
-/* ── Date helpers ────────────────────────────────────────────── */
-function fmtDateStr(d){
-  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${dd}`;
-}
-function parseDateStr(s){
-  const [y,m,d] = s.split('-').map(Number);
-  return new Date(y, m-1, d);
-}
-function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
-function addYears(d,n){ const r=new Date(d); r.setFullYear(r.getFullYear()+n); return r; }
-function firstOfMonth(d){ return new Date(d.getFullYear(), d.getMonth(), 1); }
-function daysBetween(a,b){ return Math.round((b-a)/86400000); }
-
-// The most recent date present in History = "yesterday" from the script's perspective.
-function getAnchorDate(){
-  if (!historyData.length) return addDays(new Date(), -1);
-  let max = null;
-  historyData.forEach(r => {
-    if (!r.Date) return;
-    const d = parseDateStr(String(r.Date));
-    if (!max || d > max) max = d;
-  });
-  return max || addDays(new Date(), -1);
-}
-
-// Returns current / period-over-period / year-over-year date ranges for a given period key.
-function getRanges(period, anchor){
-  let curStart;
-  if (period === 'last7') curStart = addDays(anchor, -6);
-  else if (period === 'last30') curStart = addDays(anchor, -29);
-  else curStart = firstOfMonth(anchor); // mtd
-
-  const curEnd = anchor;
-  const dayCount = daysBetween(curStart, curEnd) + 1;
-
-  let popStart, popEnd;
-  if (period === 'mtd') {
-    const prevMonthEnd = addDays(firstOfMonth(anchor), -1);
-    popStart = firstOfMonth(prevMonthEnd);
-    popEnd = addDays(popStart, dayCount - 1);
-  } else {
-    popEnd = addDays(curStart, -1);
-    popStart = addDays(popEnd, -(dayCount - 1));
-  }
-
-  const yoyStart = addYears(curStart, -1);
-  const yoyEnd = addYears(curEnd, -1);
-
-  return {
-    cur: [curStart, curEnd],
-    pop: [popStart, popEnd],
-    yoy: [yoyStart, yoyEnd],
-    dayCount
-  };
+  return dash;
 }
 
 /* ── Data helpers ────────────────────────────────────────────── */
@@ -660,23 +621,6 @@ function aggregate(rows){
   const conversions = rows.reduce((a,r)=>a+num(r.Conversions),0);
   const clicks = rows.reduce((a,r)=>a+num(r.Clicks),0);
   return { spend, revenue, orders, conversions, clicks, roas: spend>0 ? revenue/spend : 0 };
-}
-
-// Sums History rows between two dates (inclusive) for a channel + optional brand/market.
-// Also reports whether both endpoint dates are present, as a rough completeness check.
-function sumHistory(startD, endD, channel, brand, market){
-  const startStr = fmtDateStr(startD), endStr = fmtDateStr(endD);
-  const rows = historyData.filter(r =>
-    r.Channel === channel &&
-    (!brand || r.Brand === brand) &&
-    (!market || r.Market === market) &&
-    r.Date >= startStr && r.Date <= endStr
-  );
-  const dates = new Set(rows.map(r=>r.Date));
-  const available = dates.has(startStr) && dates.has(endStr);
-  const agg = aggregate(rows);
-  agg.available = available && rows.length > 0;
-  return agg;
 }
 
 /* ── Formatting ──────────────────────────────────────────────── */
@@ -719,30 +663,28 @@ function deltaBadge(curr, comparison, label, invertColor){
 function renderKPIs(containerId, brand, market){
   const el = document.getElementById(containerId);
   if (!el) return;
-  const anchor = getAnchorDate();
-  const ranges = getRanges(currentPeriod, anchor);
 
   // "Current" values come from the live Dashboard Data snapshot (includes today so far).
-  const curRows = dashboardData.filter(r =>
-    r.Period === currentPeriod && r.Channel === 'Combined' &&
-    (!brand || r.Brand === brand) && (!market || r.Market === market)
-  );
-  const cur = aggregate(curRows);
+  const cur = aggregate(sumDashboard(currentPeriod, 'Combined', brand, market));
 
-  // PoP / YoY come from the History log.
-  const pop = sumHistory(ranges.pop[0], ranges.pop[1], 'Combined', brand, market);
-  const yoy = sumHistory(ranges.yoy[0], ranges.yoy[1], 'Combined', brand, market);
+  // PoP / YoY come from the dedicated _prior / _lastyear period rows.
+  const popRows = sumDashboard(currentPeriod + '_prior', 'Combined', brand, market);
+  const yoyRows = sumDashboard(currentPeriod + '_lastyear', 'Combined', brand, market);
+  const pop = aggregate(popRows);
+  const yoy = aggregate(yoyRows);
+  const popAvailable = popRows.length > 0;
+  const yoyAvailable = yoyRows.length > 0;
 
   const cards = [
     { label: 'Overall Spend', value: fmtCurrency(cur.spend),
-      pop: { available: pop.available, value: pop.spend }, yoy: { available: yoy.available, value: yoy.spend }, raw: cur.spend },
+      pop: { available: popAvailable, value: pop.spend }, yoy: { available: yoyAvailable, value: yoy.spend }, raw: cur.spend },
     { label: 'Overall Revenue (Net Sales)', value: fmtCurrency(cur.revenue),
-      pop: { available: pop.available, value: pop.revenue }, yoy: { available: yoy.available, value: yoy.revenue }, raw: cur.revenue },
+      pop: { available: popAvailable, value: pop.revenue }, yoy: { available: yoyAvailable, value: yoy.revenue }, raw: cur.revenue },
     { label: 'Avg. ROAS (Combined)', value: fmtRoas(cur.roas),
-      pop: { available: pop.available, value: pop.spend>0 ? pop.revenue/pop.spend : 0 },
-      yoy: { available: yoy.available, value: yoy.spend>0 ? yoy.revenue/yoy.spend : 0 }, raw: cur.roas },
+      pop: { available: popAvailable, value: pop.spend>0 ? pop.revenue/pop.spend : 0 },
+      yoy: { available: yoyAvailable, value: yoy.spend>0 ? yoy.revenue/yoy.spend : 0 }, raw: cur.roas },
     { label: 'Orders (Shopify)', value: fmtNumber(cur.orders),
-      pop: { available: pop.available, value: pop.orders }, yoy: { available: yoy.available, value: yoy.orders }, raw: cur.orders }
+      pop: { available: popAvailable, value: pop.orders }, yoy: { available: yoyAvailable, value: yoy.orders }, raw: cur.orders }
   ];
 
   el.innerHTML = cards.map(c => `
@@ -788,10 +730,8 @@ function renderRoasTable(){
 
 /* ── DoD / MoM tables (Google Ads & Meta) ───────────────────────── */
 function renderTrendTables(suffix, brand, market){
-  const anchor = getAnchorDate();
 
-  // Day over Day
-  const yest = anchor, dayBefore = addDays(anchor, -1);
+  // Day over Day (yesterday vs the day before)
   let dodHead = `<thead><tr>
     <th>Channel</th>
     <th>Spend (Yesterday)</th><th>Spend Δ DoD</th>
@@ -800,31 +740,28 @@ function renderTrendTables(suffix, brand, market){
     <th>Conversions</th><th>Conv. Δ DoD</th>
   </tr></thead><tbody>`;
   ['Google Ads','Meta'].forEach(channel => {
-    const c = sumHistory(yest, yest, channel, brand, market);
-    const p = sumHistory(dayBefore, dayBefore, channel, brand, market);
+    const cRows = sumDashboard('yesterday', channel, brand, market);
+    const pRows = sumDashboard('daybefore', channel, brand, market);
+    const c = aggregate(cRows);
+    const p = aggregate(pRows);
+    const pAvailable = pRows.length > 0;
     dodHead += `<tr>
       <td class="brand-cell">${channel}</td>
       <td>${fmtCurrency(c.spend)}</td>
-      <td>${deltaBadge(c.spend, {available:p.available, value:p.spend}, '')}</td>
+      <td>${deltaBadge(c.spend, {available:pAvailable, value:p.spend}, '')}</td>
       <td>${fmtCurrency(c.revenue)}</td>
-      <td>${deltaBadge(c.revenue, {available:p.available, value:p.revenue}, '')}</td>
+      <td>${deltaBadge(c.revenue, {available:pAvailable, value:p.revenue}, '')}</td>
       <td>${fmtRoas(c.roas)}</td>
-      <td>${deltaBadge(c.roas, {available:p.available, value:p.roas}, '')}</td>
+      <td>${deltaBadge(c.roas, {available:pAvailable, value:p.roas}, '')}</td>
       <td>${fmtNumber(c.conversions)}</td>
-      <td>${deltaBadge(c.conversions, {available:p.available, value:p.conversions}, '')}</td>
+      <td>${deltaBadge(c.conversions, {available:pAvailable, value:p.conversions}, '')}</td>
     </tr>`;
   });
   dodHead += '</tbody>';
   const dodEl = document.getElementById('dodTable-' + suffix);
   if (dodEl) dodEl.innerHTML = dodHead;
 
-  // Month over Month
-  const curStart = firstOfMonth(anchor);
-  const dayCount = daysBetween(curStart, anchor) + 1;
-  const prevMonthEnd = addDays(firstOfMonth(anchor), -1);
-  const prevStart = firstOfMonth(prevMonthEnd);
-  const prevEnd = addDays(prevStart, dayCount - 1);
-
+  // Month over Month (MTD vs same days last month)
   let momHead = `<thead><tr>
     <th>Channel</th>
     <th>Spend (MTD)</th><th>Spend Δ MoM</th>
@@ -833,18 +770,21 @@ function renderTrendTables(suffix, brand, market){
     <th>Conversions</th><th>Conv. Δ MoM</th>
   </tr></thead><tbody>`;
   ['Google Ads','Meta'].forEach(channel => {
-    const c = sumHistory(curStart, anchor, channel, brand, market);
-    const p = sumHistory(prevStart, prevEnd, channel, brand, market);
+    const cRows = sumDashboard('mtd', channel, brand, market);
+    const pRows = sumDashboard('mtd_prior', channel, brand, market);
+    const c = aggregate(cRows);
+    const p = aggregate(pRows);
+    const pAvailable = pRows.length > 0;
     momHead += `<tr>
       <td class="brand-cell">${channel}</td>
       <td>${fmtCurrency(c.spend)}</td>
-      <td>${deltaBadge(c.spend, {available:p.available, value:p.spend}, '')}</td>
+      <td>${deltaBadge(c.spend, {available:pAvailable, value:p.spend}, '')}</td>
       <td>${fmtCurrency(c.revenue)}</td>
-      <td>${deltaBadge(c.revenue, {available:p.available, value:p.revenue}, '')}</td>
+      <td>${deltaBadge(c.revenue, {available:pAvailable, value:p.revenue}, '')}</td>
       <td>${fmtRoas(c.roas)}</td>
-      <td>${deltaBadge(c.roas, {available:p.available, value:p.roas}, '')}</td>
+      <td>${deltaBadge(c.roas, {available:pAvailable, value:p.roas}, '')}</td>
       <td>${fmtNumber(c.conversions)}</td>
-      <td>${deltaBadge(c.conversions, {available:p.available, value:p.conversions}, '')}</td>
+      <td>${deltaBadge(c.conversions, {available:pAvailable, value:p.conversions}, '')}</td>
     </tr>`;
   });
   momHead += '</tbody>';
@@ -941,6 +881,98 @@ function renderRegionTable(brand){
   table.innerHTML = head + body + '</tbody>';
 }
 
+/* ── MoM charts (Google Ads & Meta) ─────────────────────────────── */
+const momCharts = {};
+
+function destroyChart(key){
+  if (momCharts[key]) {
+    momCharts[key].destroy();
+    delete momCharts[key];
+  }
+}
+
+function renderMoMCharts(suffix, brand, market){
+  if (typeof Chart === 'undefined') return;
+  const spendCanvas = document.getElementById('momChartSpendRevenue-' + suffix);
+  const roasCanvas = document.getElementById('momChartRoas-' + suffix);
+  if (!spendCanvas || !roasCanvas) return;
+
+  const channels = ['Google Ads','Meta'];
+  const cur = {}, prior = {};
+  let priorAvailable = false;
+  channels.forEach(channel => {
+    const priorRows = sumDashboard('mtd_prior', channel, brand, market);
+    if (priorRows.length) priorAvailable = true;
+    cur[channel] = aggregate(sumDashboard('mtd', channel, brand, market));
+    prior[channel] = aggregate(priorRows);
+  });
+
+  const goldColor = '#c9a227';
+  const greyColor = '#cfcac0';
+
+  destroyChart('spendRevenue-' + suffix);
+  momCharts['spendRevenue-' + suffix] = new Chart(spendCanvas, {
+    type: 'bar',
+    data: {
+      labels: ['Google Ads — Spend','Google Ads — Revenue','Meta — Spend','Meta — Revenue'],
+      datasets: [
+        {
+          label: 'Month to Date',
+          backgroundColor: goldColor,
+          data: [cur['Google Ads'].spend, cur['Google Ads'].revenue, cur['Meta'].spend, cur['Meta'].revenue]
+        },
+        {
+          label: priorAvailable ? 'Same Period Last Month' : 'Same Period Last Month (n/a)',
+          backgroundColor: greyColor,
+          data: [prior['Google Ads'].spend, prior['Google Ads'].revenue, prior['Meta'].spend, prior['Meta'].revenue]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: { display: true, text: 'Spend & Revenue — Month over Month' },
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: (v) => '$' + Number(v).toLocaleString('en-AU') } }
+      }
+    }
+  });
+
+  destroyChart('roas-' + suffix);
+  momCharts['roas-' + suffix] = new Chart(roasCanvas, {
+    type: 'bar',
+    data: {
+      labels: ['Google Ads','Meta'],
+      datasets: [
+        {
+          label: 'Month to Date',
+          backgroundColor: goldColor,
+          data: [cur['Google Ads'].roas, cur['Meta'].roas]
+        },
+        {
+          label: priorAvailable ? 'Same Period Last Month' : 'Same Period Last Month (n/a)',
+          backgroundColor: greyColor,
+          data: [prior['Google Ads'].roas, prior['Meta'].roas]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: { display: true, text: 'ROAS — Month over Month' },
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: (v) => Number(v).toFixed(1) + 'x' } }
+      }
+    }
+  });
+}
+
 /* ── Render everything ───────────────────────────────────────── */
 function renderAll(){
   if (!dashboardData.length) return;
@@ -948,17 +980,20 @@ function renderAll(){
   renderKPIs('kpi-summary', null, null);
   renderRoasTable();
   renderTrendTables('summary', null, null);
+  renderMoMCharts('summary', null, null);
   renderSummaryBreakdown();
 
   BRAND_ORDER.forEach(brand => {
     renderKPIs('kpi-' + brand, brand, null);
     renderTrendTables(brand, brand, null);
+    renderMoMCharts(brand, brand, null);
     renderRegionTable(brand);
 
     BRAND_META[brand].markets.forEach(market => {
       const id = marketId(brand, market);
       renderKPIs('kpi-' + id, brand, market);
       renderTrendTables(id, brand, market);
+      renderMoMCharts(id, brand, market);
     });
   });
 }
